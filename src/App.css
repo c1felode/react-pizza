@@ -1,0 +1,90 @@
+.pizza-block {
+    min-width: 350px;
+    padding: 20px;
+}
+
+.pizzas-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pizza-block__title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.pizza-block__select-list {
+    list-style-type: none;
+    display: flex;
+    gap: 3px;
+}
+
+.pizza-block__select-list li {
+    text-align: center;
+    width: 100%;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+.pizza-size li {
+    padding: 5px 15px;
+}
+
+.pizza-block__select {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.pizza-block__select-item.active {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.pizza-block__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-radius: 10px;
+}
+
+.pizza-block__button {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-content: center;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    cursor: pointer;
+}
+
+.pizza-block__button-line {
+    display: block;
+    width: 1px;
+    height: 18px;
+    background-color: var(--secondary-color);
+}
+
+.pizza-block__price {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 50px;
+
+}

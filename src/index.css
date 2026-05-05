@@ -1,0 +1,28 @@
+:root {
+    --primary-color: #fe5f1e;
+    --secondary-color: #fff;
+}
+
+* {
+    font-family: "Nunito", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.content {
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.pizza-block {
+    width: 25%;
+    padding: 20px;
+}

@@ -1,0 +1,152 @@
+[
+  {
+    "id": 0,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/11ee89722ed2d2f992155a94fa4d383a.jpg",
+    "title": "Маргарита",
+    "price": 39,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 4
+  },
+  {
+    "id": 1,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/019bb0eb3db8703589158ad8f40ada24.jpg",
+    "title": "Сырная",
+    "price": 39,
+    "types": [0, 1],
+    "sizes": [20, 25, 30],
+    "category": 0,
+    "rating": 7
+  },
+  {
+    "id": 2,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/11ee8977d2824254a943008321e7f2e9.jpg",
+    "title": "Индейка и сыр",
+    "price": 39,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 7
+  },
+  {
+    "id": 3,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/11ee7d6264845c8fb0b7e3bcfca7b15e.jpg",
+    "title": "Чизз Чеддер",
+    "price": 45,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 3
+  },
+  {
+    "id": 4,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/11eed73ac8e9eec7aa6ca76132e898c5.jpg",
+    "title": "Пицца Пирог",
+    "price": 55,
+    "types": [0, 1],
+    "sizes": [25, 30, 35],
+    "category": 0,
+    "rating": 3
+  },
+  {
+    "id": 5,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/019a8697b9d978a78dd88586cb2c751d.jpg",
+    "title": "Индейка и огурчики",
+    "price": 45,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 5
+  },
+  {
+    "id": 6,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/11ee897382fe407eb533708a14b5d5bc.jpg",
+    "title": "Пепперони",
+    "price": 49,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 9
+  },
+  {
+    "id": 7,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/019a9051bd2f711daa6d611a3b8da104.jpg",
+    "title": "Белая Пепперони",
+    "price": 49,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 6
+  },
+  {
+    "id": 8,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/019bb0ef42d072b69ff79ef1c05447ce.jpg",
+    "title": "Сырный Цыплёнок",
+    "price": 45,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 3
+  },
+  {
+    "id": 9,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/11eed73c6b01e9ecab89410716435740.jpg",
+    "title": "Чизбурген-пицца",
+    "price": 55,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 1
+  },
+  {
+    "id": 10,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/019a868ba3d37545aa55d793003c7d16.jpg",
+    "title": "Двойной Цыплёнок",
+    "price": 55,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 2
+  },
+  {
+    "id": 11,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/11ee89684857cd20b0692e412be15dfd.jpg",
+    "title": "Цыпленок Ранч",
+    "price": 55,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 1
+  },
+  {
+    "id": 12,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/11ee7d62820ded89b23fbf6866a7028e.jpg",
+    "title": "Колбаски Барбекю",
+    "price": 55,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 7
+  },
+  {
+    "id": 13,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/11ee89717a8a877db226c44eaed64208.jpg",
+    "title": "Гавайская",
+    "price": 55,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 8
+  },
+  {
+    "id": 14,
+    "imageUrl": "https://media.dodostatic.net/image/r:292x292/019a8681480178859ff8adecdb5e18ea.jpg",
+    "title": "Баварская",
+    "price": 55,
+    "types": [0, 1],
+    "sizes": [20, 25, 30, 35],
+    "category": 0,
+    "rating": 4
+  }
+]

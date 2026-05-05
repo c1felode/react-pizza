@@ -1,0 +1,41 @@
+@import '../../index.css';
+.cart_btn {
+    padding: 8px 30px;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+}
+
+.cart_btn__title {
+    font-size: 14px;
+}
+
+.cart_btn__content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.cart_btn__count {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.cart_btn__icon {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+.cart_btn__icon svg {
+    width: 25px;
+}
+
+.cart_btn__line {
+    display: block;
+    width: 1px;
+    height: 20px;
+    background-color: var(--secondary-color);
+}
