@@ -1,6 +1,11 @@
 :root {
-    --primary-color: #fe5f1e;
+    --primary-color: #B77466;
+    --primary-lighter: #FFE1AF;
     --secondary-color: #fff;
+}
+
+body {
+    background-color: var(--primary-lighter);
 }
 
 * {
@@ -20,6 +25,17 @@
     display: flex;
     flex-wrap: wrap;
 
+}
+
+.pizzas {
+    width: 100%;
+    padding: 0 40px 40px 40px;
+    border-radius: 10px;
+    background-color: white;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
 }
 
 .pizza-block {
