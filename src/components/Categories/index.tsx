@@ -1,20 +1,20 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategory } from '../../redux/slices/filterSlice.js';
+import { setCategory } from '../../redux/slices/filterSlice.ts';
 
 import styles from './categories.module.css';
+import { IRootState } from '../../types/redux.ts';
 
 const Categories = () => {
-  const categoryId = useSelector((state) => state.filter.categoryId);
+  const categoryId: number = useSelector((state: IRootState) => state.filter.categoryId);
   const dispatch = useDispatch();
-  console.log('redux state ', categoryId);
 
-  const categories = ['Все', 'Мясное', 'Вегетарианское', 'Грибное', 'Другое'];
-  const onClickCategory = (id) => {
+  const categories: string[] = ['Все', 'Мясное', 'Вегетарианское', 'Грибное', 'Другое'];
+  const onClickCategory = (id: number): void => {
     dispatch(setCategory(id));
   };
   return (
     <ul className={styles.categories}>
-      {categories.map((category, i) => (
+      {categories.map((category: string, i: number) => (
         <li
           onClick={() => onClickCategory(i)}
           key={i}

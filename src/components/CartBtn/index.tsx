@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import styles from './cart.module.css';
 import { useSelector } from 'react-redux';
+import { IRootState } from '../../types/redux';
 
 const CartBtn = () => {
-  const { totalPrice } = useSelector((state) => state.cart);
-  const totalCount = useSelector((state) =>
-    state.cart.items.reduce((sum, obj) => {
+  const { totalPrice }: { totalPrice: number } = useSelector((state: IRootState) => state.cart);
+  const totalCount: number = useSelector((state: IRootState) =>
+    state.cart.items.reduce((sum: number, obj: any) => {
       return obj.count + sum;
     }, 0),
   );

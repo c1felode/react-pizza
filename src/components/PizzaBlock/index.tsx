@@ -1,25 +1,28 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addItem } from '../../redux/slices/cartSlice';
-
+import { addItem } from '../../redux/slices/cartSlice.ts';
+import { TPizzaBlockProps, TCartItem } from '../../types/types.ts';
+import { IRootState } from '../../types/redux.ts';
 const typeNames = ['Тонкое', 'Традиционное'];
 
-const PizzaBlock = ({ id, imageUrl, title, sizes, price, types }) => {
-  const cartItem = useSelector((state) => state.cart.items.find((obj) => obj.id == id));
+
+const PizzaBlock = ({ id, imageUrl, title, sizes, price, types }: TPizzaBlockProps) => {
+  const cartItem: TCartItem | undefined = useSelector((state: IRootState) => state.cart.items.find((obj: TCartItem) => obj.id === id));
 
   const addedCount = cartItem ? cartItem.count : 0;
   const dispatch = useDispatch();
-  const [activeType, setActiveType] = useState(0);
-  const [activeSize, setActiveSize] = useState(0);
+  const [activeType, setActiveType] = useState<number>(0);
+  const [activeSize, setActiveSize] = useState<number>(0);
 
   const handleAddItem = () => {
-    const item = {
+    const item: TCartItem = {
       id,
       title,
       price,
       imageUrl,
       type: typeNames[activeType],
       size: sizes[activeSize],
+      count: 1
     };
     dispatch(addItem(item));
   };
@@ -32,7 +35,7 @@ const PizzaBlock = ({ id, imageUrl, title, sizes, price, types }) => {
       <h4 className='pizza-block__title'>{title}</h4>
       <div className='pizza-block__select'>
         <ul className='pizza-block__select-list pizza-type'>
-          {types.map((type, i) => {
+          {types?.map((type: number, i: number) => {
             return (
               <li
                 onClick={() => setActiveType(i)}
@@ -45,7 +48,7 @@ const PizzaBlock = ({ id, imageUrl, title, sizes, price, types }) => {
           })}
         </ul>
         <ul className='pizza-block__select-list pizza-size'>
-          {sizes.map((size, i) => {
+          {sizes?.map((size: number, i: number) => {
             return (
               <li
                 onClick={() => setActiveSize(i)}

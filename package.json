@@ -1,8 +1,19 @@
 {
   "name": "react-pizza-v0",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "private": true,
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "homepage": "https://github.com/c1felode/react-pizza#readme",
+  "bugs": {
+    "url": "https://github.com/c1felode/react-pizza/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/c1felode/react-pizza.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "main": "eslint.config.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,6 +22,8 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.8.0",
     "axios": "^1.16.0",
     "react": "^19.2.5",
     "react-content-loader": "^7.1.2",
@@ -28,6 +41,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "typescript": "^6.0.3",
     "vite": "^8.0.10"
   }
 }

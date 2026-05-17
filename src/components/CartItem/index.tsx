@@ -1,21 +1,23 @@
 import { useDispatch } from 'react-redux';
 import styles from './cartitem.module.css';
-import { addItem, minusItem, removeItem } from '../../redux/slices/cartSlice';
+import { addItem, minusItem, removeItem } from '../../redux/slices/cartSlice.ts';
+import { TCartItemProps } from '../../types/types';
 
-const CartItem = ({ id, title, type, price, imageUrl, count }) => {
+
+const CartItem = ({ id, title, type, price, imageUrl, count, size }: TCartItemProps) => {
   const dispatch = useDispatch();
 
   const onClickPlus = () => {
     dispatch(
       addItem({
-        id,
+        id
       }),
     );
   };
   const onClickMinus = () => {
     dispatch(
       minusItem({
-        id,
+        id
       }),
     );
   };
@@ -33,7 +35,7 @@ const CartItem = ({ id, title, type, price, imageUrl, count }) => {
           <div className={styles.itemTitle}>{title}</div>
           <div className={styles.itemDescr}>
             <span>{type},</span>
-            <span>25 см</span>
+            <span>{size} см</span>
           </div>
         </div>
       </div>

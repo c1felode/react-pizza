@@ -1,12 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux';
-import CartItem from '../components/CartItem';
+import CartItem from '../components/CartItem/index.tsx';
 
-import { clearCart } from '../redux/slices/cartSlice';
+import { clearCart } from '../redux/slices/cartSlice.ts';
+import { IRootState } from '../types/redux.ts';
+import { TCartItem } from '../types/types.ts';
 
 const Cart = () => {
   const dispatch = useDispatch();
-  const items = useSelector((state) => state.cart.items);
-  const handleClearCart = () => {
+  const items: TCartItem[] = useSelector((state: IRootState) => state.cart.items);
+  const handleClearCart = (): void => {
     dispatch(clearCart());
   };
 
@@ -19,7 +21,7 @@ const Cart = () => {
         </button>
       </div>
       <div className='cart__content'>
-        {items.map((item) => (
+        {items?.map((item: TCartItem) => (
           <CartItem key={item.id} {...item} />
         ))}
       </div>

@@ -1,13 +1,13 @@
 import { Route, Routes } from 'react-router';
 import './App.css';
-import Header from './components/Header/index.jsx';
-import Home from './pages/Home.jsx';
-import Cart from './pages/Cart.jsx';
-import EmptyCart from './pages/EmptyCart.jsx';
+import Header from './components/Header/index.tsx';
+import Home from './pages/Home.tsx';
+import Cart from './pages/Cart.tsx';
+import EmptyCart from './pages/EmptyCart.tsx';
 import { useSelector } from 'react-redux';
 
 function App() {
-  const items = useSelector((state) => state.cart.items);
+  const items = useSelector((state: any) => state.cart.items);
   return (
     <>
       <div className='container'>
