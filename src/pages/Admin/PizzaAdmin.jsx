@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-
-const API_URL = "https://69ef40f0112e1b968e2443fa.mockapi.io/items";
+import { supabaseAdmin } from "../../lib/supabase.js";
 
 const CATEGORIES = { 1: "Meat", 2: "Margherita", 3: "Chicken", 4: "Special" };
 const TYPES = { 0: "Traditional", 1: "Thin" };
@@ -9,7 +8,7 @@ const ALL_SIZES = [20, 25, 30, 35];
 const EMPTY_FORM = {
   title: "",
   price: "",
-  imageUrl: "",
+  image_url: "",
   category: 1,
   rating: 5,
   types: [0, 1],
@@ -58,7 +57,8 @@ function Badge({ label, color }) {
   );
 }
 
-const categoryBadgeColor = (cat) => ({ 1: "meat", 2: "margherita", 3: "chicken", 4: "special" }[cat] || "default");
+const categoryBadgeColor = (cat) =>
+  ({ 1: "meat", 2: "margherita", 3: "chicken", 4: "special" }[cat] || "default");
 
 export default function PizzaAdmin() {
   const [pizzas, setPizzas] = useState([]);
@@ -74,20 +74,20 @@ export default function PizzaAdmin() {
   const [toast, setToast] = useState(null);
 
   // eslint-disable-next-line react-hooks/immutability
-  useEffect(() => { fetchPizzas() }, []);
+  useEffect(() => { fetchPizzas(); }, []);
 
   async function fetchPizzas() {
     setLoading(true);
     setError(null);
-    try {
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error("Failed to fetch");
-      setPizzas(await res.json());
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
+    // Supabase: .from("items").select("*") вместо fetch(API_URL)
+    const { data, error } = await supabaseAdmin
+      .from("items")
+      .select("*")
+      .order("id", { ascending: true });
+
+    if (error) setError(error.message);
+    else setPizzas(data);
+    setLoading(false);
   }
 
   function showToast(msg, type = "success") {
@@ -106,7 +106,7 @@ export default function PizzaAdmin() {
     setForm({
       title: pizza.title,
       price: pizza.price,
-      imageUrl: pizza.imageUrl,
+      image_url: pizza.image_url,
       category: pizza.category,
       rating: pizza.rating,
       types: [...pizza.types],
@@ -118,36 +118,45 @@ export default function PizzaAdmin() {
   async function handleSave() {
     if (!form.title.trim() || !form.price) return;
     setSaving(true);
+
+    const payload = {
+      title: form.title.trim(),
+      price: Number(form.price),
+      image_url: form.image_url,
+      category: Number(form.category),
+      rating: Number(form.rating),
+      types: form.types,
+      sizes: form.sizes,
+    };
+
     try {
-      const payload = {
-        ...form,
-        price: Number(form.price),
-        rating: Number(form.rating),
-      };
       if (editTarget) {
-        const res = await fetch(`${API_URL}/${editTarget.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error();
-        const updated = await res.json();
-        setPizzas((p) => p.map((x) => (x.id === editTarget.id ? updated : x)));
-        showToast("Pizza updated!");
+        // Supabase UPDATE: .update(payload).eq("id", id)
+        const { data, error } = await supabaseAdmin
+          .from("items")
+          .update(payload)
+          .eq("id", editTarget.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        setPizzas((p) => p.map((x) => (x.id === editTarget.id ? data : x)));
+        showToast("Пицца обновлена!");
       } else {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error();
-        const created = await res.json();
-        setPizzas((p) => [...p, created]);
-        showToast("Pizza added!");
+        // Supabase INSERT: .insert(payload).select().single()
+        const { data, error } = await supabaseAdmin
+          .from("items")
+          .insert(payload)
+          .select()
+          .single();
+
+        if (error) throw error;
+        setPizzas((p) => [...p, data]);
+        showToast("Пицца добавлена!");
       }
       setModalOpen(false);
-    } catch {
-      showToast("Something went wrong.", "error");
+    } catch (e) {
+      showToast(e.message || "Что-то пошло не так.", "error");
     } finally {
       setSaving(false);
     }
@@ -155,17 +164,19 @@ export default function PizzaAdmin() {
 
   async function handleDelete(pizza) {
     setSaving(true);
-    try {
-      const res = await fetch(`${API_URL}/${pizza.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error();
+    // Supabase DELETE: .delete().eq("id", id)
+    const { error } = await supabaseAdmin
+      .from("items")
+      .delete()
+      .eq("id", pizza.id);
+
+    if (error) showToast(error.message, "error");
+    else {
       setPizzas((p) => p.filter((x) => x.id !== pizza.id));
-      showToast("Pizza deleted.");
-    } catch {
-      showToast("Delete failed.", "error");
-    } finally {
-      setSaving(false);
-      setDeleteModal(null);
+      showToast("Пицца удалена.");
     }
+    setSaving(false);
+    setDeleteModal(null);
   }
 
   function toggleCheck(arr, setArr, val) {
@@ -178,11 +189,12 @@ export default function PizzaAdmin() {
     return matchSearch && matchCat;
   });
 
-  const stars = (r) => "★".repeat(Math.min(Math.round(r / 2), 5)) + "☆".repeat(5 - Math.min(Math.round(r / 2), 5));
+  const stars = (r) =>
+    "★".repeat(Math.min(Math.round(r / 2), 5)) +
+    "☆".repeat(5 - Math.min(Math.round(r / 2), 5));
 
   return (
     <div style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif", minHeight: "100vh", background: "#F8F7F4", color: "#1a1a1a" }}>
-      {/* Toast */}
       {toast && (
         <div style={{
           position: "fixed", top: 24, right: 24, zIndex: 2000,
@@ -193,7 +205,6 @@ export default function PizzaAdmin() {
         }}>{toast.msg}</div>
       )}
 
-      {/* Header */}
       <div style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "0 2rem" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -205,50 +216,40 @@ export default function PizzaAdmin() {
             padding: "8px 18px", fontWeight: 600, fontSize: 14, cursor: "pointer",
             display: "flex", alignItems: "center", gap: 6,
           }}>
-            <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Add pizza
+            <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Добавить пиццу
           </button>
         </div>
       </div>
 
-      {/* Toolbar */}
       <div style={{ maxWidth: 1100, margin: "2rem auto", padding: "0 2rem" }}>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: "1.5rem" }}>
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search pizzas..."
-            style={{
-              border: "1px solid #E5E7EB", borderRadius: 10, padding: "8px 14px",
-              fontSize: 14, outline: "none", width: 220, background: "#fff",
-            }}
+            placeholder="Поиск..."
+            style={{ border: "1px solid #E5E7EB", borderRadius: 10, padding: "8px 14px", fontSize: 14, outline: "none", width: 220, background: "#fff" }}
           />
           <div style={{ display: "flex", gap: 6 }}>
-            {[{ id: 0, label: "All" }, ...Object.entries(CATEGORIES).map(([id, label]) => ({ id: Number(id), label }))].map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setFilterCat(c.id)}
-                style={{
-                  padding: "8px 14px", borderRadius: 10, fontSize: 13, fontWeight: 500, cursor: "pointer",
-                  border: filterCat === c.id ? "none" : "1px solid #E5E7EB",
-                  background: filterCat === c.id ? "#FF5733" : "#fff",
-                  color: filterCat === c.id ? "#fff" : "#374151",
-                  transition: "all 0.15s",
-                }}
-              >{c.label}</button>
+            {[{ id: 0, label: "Все" }, ...Object.entries(CATEGORIES).map(([id, label]) => ({ id: Number(id), label }))].map((c) => (
+              <button key={c.id} onClick={() => setFilterCat(c.id)} style={{
+                padding: "8px 14px", borderRadius: 10, fontSize: 13, fontWeight: 500, cursor: "pointer",
+                border: filterCat === c.id ? "none" : "1px solid #E5E7EB",
+                background: filterCat === c.id ? "#FF5733" : "#fff",
+                color: filterCat === c.id ? "#fff" : "#374151",
+              }}>{c.label}</button>
             ))}
           </div>
           <div style={{ marginLeft: "auto", fontSize: 13, color: "#6B7280", alignSelf: "center" }}>
-            {filtered.length} item{filtered.length !== 1 ? "s" : ""}
+            {filtered.length} позиций
           </div>
         </div>
 
-        {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: "1.5rem" }}>
           {[
-            { label: "Total pizzas", value: pizzas.length },
-            { label: "Avg price", value: pizzas.length ? `$${(pizzas.reduce((s, p) => s + p.price, 0) / pizzas.length).toFixed(0)}` : "—" },
-            { label: "Categories", value: Object.keys(CATEGORIES).length },
-            { label: "Top rated", value: pizzas.length ? pizzas.reduce((a, b) => a.rating > b.rating ? a : b).title : "—" },
+            { label: "Всего пицц", value: pizzas.length },
+            { label: "Средняя цена", value: pizzas.length ? `$${(pizzas.reduce((s, p) => s + p.price, 0) / pizzas.length).toFixed(0)}` : "—" },
+            { label: "Категорий", value: Object.keys(CATEGORIES).length },
+            { label: "Топ рейтинг", value: pizzas.length ? pizzas.reduce((a, b) => a.rating > b.rating ? a : b).title : "—" },
           ].map((s) => (
             <div key={s.label} style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 12, padding: "14px 18px" }}>
               <div style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 500, marginBottom: 4 }}>{s.label}</div>
@@ -257,17 +258,16 @@ export default function PizzaAdmin() {
           ))}
         </div>
 
-        {/* Table */}
         {loading ? (
-          <div style={{ textAlign: "center", padding: "4rem", color: "#9CA3AF" }}>Loading...</div>
+          <div style={{ textAlign: "center", padding: "4rem", color: "#9CA3AF" }}>Загрузка...</div>
         ) : error ? (
-          <div style={{ textAlign: "center", padding: "4rem", color: "#EF4444" }}>Error: {error}</div>
+          <div style={{ textAlign: "center", padding: "4rem", color: "#EF4444" }}>Ошибка: {error}</div>
         ) : (
           <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #E5E7EB", overflow: "hidden" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
               <thead>
                 <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
-                  {["Pizza", "Category", "Price", "Rating", "Sizes", "Actions"].map((h) => (
+                  {["Пицца", "Категория", "Цена", "Рейтинг", "Размеры", "Действия"].map((h) => (
                     <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, fontSize: 12, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
                   ))}
                 </tr>
@@ -277,7 +277,7 @@ export default function PizzaAdmin() {
                   <tr key={pizza.id} style={{ borderBottom: i < filtered.length - 1 ? "1px solid #F3F4F6" : "none" }}>
                     <td style={{ padding: "12px 16px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <img src={pizza.imageUrl} alt={pizza.title} style={{ width: 44, height: 44, borderRadius: 8, objectFit: "cover", background: "#F3F4F6" }} onError={(e) => { e.target.style.display = "none"; }} />
+                        <img src={pizza.image_url} alt={pizza.title} style={{ width: 44, height: 44, borderRadius: 8, objectFit: "cover", background: "#F3F4F6" }} onError={(e) => { e.target.style.display = "none"; }} />
                         <div>
                           <div style={{ fontWeight: 600 }}>{pizza.title}</div>
                           <div style={{ fontSize: 12, color: "#9CA3AF" }}>ID: {pizza.id}</div>
@@ -295,26 +295,20 @@ export default function PizzaAdmin() {
                     <td style={{ padding: "12px 16px" }}>
                       <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
                         {pizza.sizes.map((s) => (
-                          <span key={s} style={{ fontSize: 11, background: "#F3F4F6", borderRadius: 6, padding: "2px 6px", color: "#374151" }}>{s}cm</span>
+                          <span key={s} style={{ fontSize: 11, background: "#F3F4F6", borderRadius: 6, padding: "2px 6px", color: "#374151" }}>{s}см</span>
                         ))}
                       </div>
                     </td>
                     <td style={{ padding: "12px 16px" }}>
                       <div style={{ display: "flex", gap: 6 }}>
-                        <button onClick={() => openEdit(pizza)} style={{
-                          padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: "pointer",
-                          border: "1px solid #E5E7EB", background: "#fff", color: "#374151",
-                        }}>Edit</button>
-                        <button onClick={() => setDeleteModal(pizza)} style={{
-                          padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: "pointer",
-                          border: "1px solid #FEE2E2", background: "#FEF2F2", color: "#DC2626",
-                        }}>Delete</button>
+                        <button onClick={() => openEdit(pizza)} style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: "pointer", border: "1px solid #E5E7EB", background: "#fff", color: "#374151" }}>Изменить</button>
+                        <button onClick={() => setDeleteModal(pizza)} style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: "pointer", border: "1px solid #FEE2E2", background: "#FEF2F2", color: "#DC2626" }}>Удалить</button>
                       </div>
                     </td>
                   </tr>
                 ))}
                 {filtered.length === 0 && (
-                  <tr><td colSpan={6} style={{ padding: "3rem", textAlign: "center", color: "#9CA3AF" }}>No pizzas found</td></tr>
+                  <tr><td colSpan={6} style={{ padding: "3rem", textAlign: "center", color: "#9CA3AF" }}>Ничего не найдено</td></tr>
                 )}
               </tbody>
             </table>
@@ -322,32 +316,31 @@ export default function PizzaAdmin() {
         )}
       </div>
 
-      {/* Add/Edit Modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
         <h2 style={{ margin: "0 0 1.5rem", fontSize: 20, fontWeight: 700 }}>
-          {editTarget ? "Edit pizza" : "Add new pizza"}
+          {editTarget ? "Редактировать пиццу" : "Добавить пиццу"}
         </h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <label style={labelStyle}>
-            Name
-            <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} style={inputStyle} placeholder="e.g. Pepperoni Supreme" />
+            Название
+            <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} style={inputStyle} placeholder="Пепперони Делюкс" />
           </label>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <label style={labelStyle}>
-              Price ($)
+              Цена ($)
               <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} style={inputStyle} placeholder="49" />
             </label>
             <label style={labelStyle}>
-              Rating (1–10)
+              Рейтинг (1–10)
               <input type="number" min={1} max={10} value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} style={inputStyle} />
             </label>
           </div>
           <label style={labelStyle}>
-            Image URL
-            <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} style={inputStyle} placeholder="https://..." />
+            Ссылка на изображение
+            <input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} style={inputStyle} placeholder="https://..." />
           </label>
           <label style={labelStyle}>
-            Category
+            Категория
             <select value={form.category} onChange={(e) => setForm({ ...form, category: Number(e.target.value) })} style={inputStyle}>
               {Object.entries(CATEGORIES).map(([id, name]) => (
                 <option key={id} value={id}>{name}</option>
@@ -355,7 +348,7 @@ export default function PizzaAdmin() {
             </select>
           </label>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: "#374151", marginBottom: 8 }}>Crust types</div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: "#374151", marginBottom: 8 }}>Тип теста</div>
             <div style={{ display: "flex", gap: 10 }}>
               {Object.entries(TYPES).map(([id, name]) => (
                 <label key={id} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, cursor: "pointer" }}>
@@ -366,7 +359,7 @@ export default function PizzaAdmin() {
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: "#374151", marginBottom: 8 }}>Available sizes (cm)</div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: "#374151", marginBottom: 8 }}>Размеры (см)</div>
             <div style={{ display: "flex", gap: 10 }}>
               {ALL_SIZES.map((s) => (
                 <label key={s} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, cursor: "pointer" }}>
@@ -378,23 +371,22 @@ export default function PizzaAdmin() {
           </div>
         </div>
         <div style={{ display: "flex", gap: 10, marginTop: "1.5rem", justifyContent: "flex-end" }}>
-          <button onClick={() => setModalOpen(false)} style={{ ...btnBase, border: "1px solid #E5E7EB", background: "#fff", color: "#374151" }}>Cancel</button>
+          <button onClick={() => setModalOpen(false)} style={{ ...btnBase, border: "1px solid #E5E7EB", background: "#fff", color: "#374151" }}>Отмена</button>
           <button onClick={handleSave} disabled={saving || !form.title || !form.price} style={{ ...btnBase, background: "#FF5733", color: "#fff", border: "none", opacity: saving || !form.title || !form.price ? 0.6 : 1 }}>
-            {saving ? "Saving…" : editTarget ? "Save changes" : "Add pizza"}
+            {saving ? "Сохраняем…" : editTarget ? "Сохранить" : "Добавить"}
           </button>
         </div>
       </Modal>
 
-      {/* Delete Confirm Modal */}
       <Modal open={!!deleteModal} onClose={() => setDeleteModal(null)}>
-        <h2 style={{ margin: "0 0 0.5rem", fontSize: 20, fontWeight: 700 }}>Delete pizza?</h2>
+        <h2 style={{ margin: "0 0 0.5rem", fontSize: 20, fontWeight: 700 }}>Удалить пиццу?</h2>
         <p style={{ color: "#6B7280", margin: "0 0 1.5rem" }}>
-          Are you sure you want to delete <strong>{deleteModal?.title}</strong>? This can't be undone.
+          Удалить <strong>{deleteModal?.title}</strong>? Это действие нельзя отменить.
         </p>
         <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-          <button onClick={() => setDeleteModal(null)} style={{ ...btnBase, border: "1px solid #E5E7EB", background: "#fff", color: "#374151" }}>Cancel</button>
+          <button onClick={() => setDeleteModal(null)} style={{ ...btnBase, border: "1px solid #E5E7EB", background: "#fff", color: "#374151" }}>Отмена</button>
           <button onClick={() => handleDelete(deleteModal)} disabled={saving} style={{ ...btnBase, background: "#DC2626", color: "#fff", border: "none" }}>
-            {saving ? "Deleting…" : "Yes, delete"}
+            {saving ? "Удаляем…" : "Да, удалить"}
           </button>
         </div>
       </Modal>
