@@ -1,18 +1,18 @@
-import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
 import { IPizzaState } from "../../types/redux";
+import { TCartItem } from "../../types/types";
+import { RootState } from "../store";
 
-export const fetchPizzas = createAsyncThunk(
+export const fetchPizzas = createAsyncThunk<TCartItem[], number | null>(
     'pizza/fetchPizzasStatus',
-    async (categoryId: number | null) => {
-        const { data } = await axios.get(
+    async (categoryId) => {
+        const { data } = await axios.get<TCartItem[]>(
             `https://69ef40f0112e1b968e2443fa.mockapi.io/items?category=${!categoryId ? '' : categoryId}`,
         );
         return data;
     }
 )
-
-
 
 const initialState: IPizzaState = {
     items: [],
@@ -31,21 +31,20 @@ const pizzaSlice = createSlice({
         builder
             .addCase(fetchPizzas.pending, (state: IPizzaState) => {
                 state.status = 'loading';
-                console.log('Загрузка пицц...');
                 state.items = [];
             })
-            .addCase(fetchPizzas.fulfilled, (state: IPizzaState, action: any) => {
+            .addCase(fetchPizzas.fulfilled, (state: IPizzaState, action: PayloadAction<TCartItem[]>) => {
                 state.status = 'success';
-                console.log('Пиццы успешно загружены');
                 state.items = action.payload;
             })
             .addCase(fetchPizzas.rejected, (state: IPizzaState) => {
                 state.status = 'error';
                 state.items = [];
-                console.log('Ошибка при загрузке пицц');
             })
     }
 })
+
+export const selectPizza = (state: RootState) => state.pizza
 
 export const {setItems} = pizzaSlice.actions
 export default pizzaSlice.reducer

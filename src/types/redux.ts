@@ -1,3 +1,5 @@
+import { TCartItem } from "./types";
+
 export interface IPizzaState {
     items: any[],
     status: 'loading' | 'success' | 'error'
@@ -14,7 +16,7 @@ export interface IFilterState {
 export interface ICartState {
     totalCount: number,
     totalPrice: number,
-    items: any[]
+    items: TCartItem[]
 }
 
 export interface IRootState {

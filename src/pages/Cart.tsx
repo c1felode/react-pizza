@@ -1,14 +1,14 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import CartItem from '../components/CartItem/index.tsx';
 
-import { clearCart } from '../redux/slices/cartSlice.ts';
-import { IRootState } from '../types/redux.ts';
+import { clearCart, selectorCartItems } from '../redux/slices/cartSlice.ts';
 import { TCartItem } from '../types/types.ts';
+import { useAppDispatch } from '../redux/store.ts';
 
 const Cart = () => {
-  const dispatch = useDispatch();
-  const items: TCartItem[] = useSelector((state: IRootState) => state.cart.items);
-  const handleClearCart = (): void => {
+  const dispatch = useAppDispatch();
+  const items = useSelector(selectorCartItems);
+  const handleClearCart = () => {
     dispatch(clearCart());
   };
 

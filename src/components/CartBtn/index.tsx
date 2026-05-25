@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom';
 import styles from './cart.module.css';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../../types/redux';
+import { selectorCart } from '../../redux/slices/cartSlice';
 
 const CartBtn = () => {
-  const { totalPrice }: { totalPrice: number } = useSelector((state: IRootState) => state.cart);
-  const totalCount: number = useSelector((state: IRootState) =>
+  const { totalPrice }: { totalPrice: number } = useSelector(selectorCart);
+  const totalCount = useSelector((state: IRootState) =>
     state.cart.items.reduce((sum: number, obj: any) => {
       return obj.count + sum;
     }, 0),

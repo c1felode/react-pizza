@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '../../redux/slices/cartSlice.ts';
 import { TPizzaBlockProps, TCartItem } from '../../types/types.ts';
 import { IRootState } from '../../types/redux.ts';
+import { useAppDispatch } from '../../redux/store.ts';
+import { useSelector } from 'react-redux';
 const typeNames = ['Тонкое', 'Традиционное'];
 
 
@@ -10,7 +11,7 @@ const PizzaBlock = ({ id, imageUrl, title, sizes, price, types }: TPizzaBlockPro
   const cartItem: TCartItem | undefined = useSelector((state: IRootState) => state.cart.items.find((obj: TCartItem) => obj.id === id));
 
   const addedCount = cartItem ? cartItem.count : 0;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [activeType, setActiveType] = useState<number>(0);
   const [activeSize, setActiveSize] = useState<number>(0);
 

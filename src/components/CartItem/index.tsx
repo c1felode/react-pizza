@@ -1,24 +1,24 @@
-import { useDispatch } from 'react-redux';
 import styles from './cartitem.module.css';
 import { addItem, minusItem, removeItem } from '../../redux/slices/cartSlice.ts';
-import { TCartItemProps } from '../../types/types';
+import { TCartItem, TCartItemProps } from '../../types/types';
+import { useAppDispatch } from '../../redux/store.ts';
 
 
 const CartItem = ({ id, title, type, price, imageUrl, count, size }: TCartItemProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onClickPlus = () => {
     dispatch(
       addItem({
         id
-      }),
+      } as TCartItem)
     );
   };
   const onClickMinus = () => {
     dispatch(
       minusItem({
         id
-      }),
+      } as TCartItem)
     );
   };
   const onDeleteItem = () => {
