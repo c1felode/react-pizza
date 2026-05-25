@@ -9,16 +9,12 @@ const CartItem = ({ id, title, type, price, imageUrl, count, size }: TCartItemPr
 
   const onClickPlus = () => {
     dispatch(
-      addItem({
-        id
-      } as TCartItem)
+      addItem({id} as TCartItem)
     );
   };
   const onClickMinus = () => {
     dispatch(
-      minusItem({
-        id
-      } as TCartItem)
+      minusItem({id} as TCartItem)
     );
   };
   const onDeleteItem = () => {
