@@ -5,7 +5,7 @@ Tech-stack used:
     React
     React Router V6
     React Redux + Redux Toolkit
-    Axios + Fetch
+    Axios
     In the future
     Typescript
     Lodash.debounce
