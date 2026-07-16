@@ -1,6 +1,32 @@
+import { useSelector } from 'react-redux';
+import CartItem from '../components/CartItem/index.tsx';
+
+import { clearCart, selectorCartItems } from '../redux/slices/cartSlice.ts';
+import { TCartItem } from '../types/types.ts';
+import { useAppDispatch } from '../redux/store.ts';
+
 const Cart = () => {
+  const dispatch = useAppDispatch();
+  const items = useSelector(selectorCartItems);
+  const handleClearCart = () => {
+    dispatch(clearCart());
+  };
+
   return (
-    <div></div>
+    <div className='cart'>
+      <div className='cart__titles'>
+        <div className='cart__title'>Корзина</div>
+        <button onClick={handleClearCart} className='cart__clear'>
+          Очистить корзину
+        </button>
+      </div>
+      <div className='cart__content'>
+        {items?.map((item: TCartItem) => (
+          <CartItem key={item.id} {...item} />
+        ))}
+      </div>
+      <button className='cart__submit'>Заказать</button>
+    </div>
   );
 };
 

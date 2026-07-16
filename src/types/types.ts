@@ -1,41 +1,28 @@
-export enum PizzaSizes {
-  SMALL = "25",
-  MEDIUM = "30",
-  LARGE = "35"
-}
-
-export enum PizzaTypes {
-    THIN = "тонкое",
-    THICK = "традиционное"
-}
-
-
 export type TCartItem = {
-  id: number;
-  name: string;
-  description: string;
+  id: string;
   imageUrl: string;
   title: string;
-  types: PizzaTypes[];
-  sizes: PizzaSizes[];
+  type: string;
+  size: number;
   price: number;
+  count: number;
 };
 
 export type TPizzaBlockProps = {
-  id: number;
+  id: string;
   imageUrl: string;
   title: string;
-  sizes: PizzaSizes[];
+  sizes: number[];
   price: number;
-  types: PizzaTypes[];
+  types: number[];
 };
 
 export type TCartItemProps = {
-  id: number;
+  id: string;
   title: string;
-  types: PizzaTypes[];
+  type: string;
   price: number;
   imageUrl: string;
   count: number;
-  sizes: PizzaSizes[];
+  size: number;
 };

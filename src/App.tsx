@@ -3,8 +3,13 @@ import './App.css';
 import Header from './components/Header/index.tsx';
 import Home from './pages/Home.tsx';
 import Cart from './pages/Cart.tsx';
+import EmptyCart from './pages/EmptyCart.tsx';
+import { useSelector } from 'react-redux';
+import { selectorCartItems } from './redux/slices/cartSlice.ts';
+
 
 function App() {
+  const items = useSelector(selectorCartItems);
   return (
     <>
       <div className='container'>
@@ -12,8 +17,12 @@ function App() {
         <div className='content'>
           <Routes>
             <Route path='/' element={<Home />} />
+            {items.length > 0 ? (
               <Route path='/cart' element={<Cart />} />
-              <Route path='/not-found' element={<h1>Not Found</h1>} />
+            ) : (
+              <Route path='/cart' element={<EmptyCart />} />
+            )}
+            <Route path='/not-found' element={<h1>Not Found</h1>} />
 
           </Routes>
         </div>
